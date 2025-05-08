@@ -2,6 +2,7 @@
 @page "/personas/editar/{Id:int}"
 @rendermode InteractiveServer
 @inject NavigationManager _navigationManager
+@inject IRepositorioPersonas _repositorioPersonas
 <PageTitle>Personas</PageTitle>
 <h3>@_mensaje Persona</h3>
 
@@ -42,25 +43,41 @@
     private Persona _persona = new();
     private string _mensaje = "Nueva ";
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
         if (Id > 0)
         {
-            _persona = new Persona
-                {
-                    Id = Id,
-                    Nombre = $"Nombre de {Id}",
-                    Correo = $"correo{Id}@ucol",
-                    Telefono = $"{Id}"
-                };
+            _persona = await _repositorioPersonas.Get(Id);
             _mensaje = "Modificar ";
         }
     }
 
-    private void Guardar()
+
+    // protected override void OnInitialized()
+    // {
+    //     if (Id > 0)
+    //     {
+    //         _persona = new Persona
+    //             {
+    //                 Id = Id,
+    //                 Nombre = $"Nombre de {Id}",
+    //                 Correo = $"correo{Id}@ucol",
+    //                 Telefono = $"{Id}"
+    //             };
+    //         _mensaje = "Modificar ";
+    //     }
+    // }
+
+    private async Task Guardar()
     {
-        // Aquí se guardaría la persona en la base de datos
-        // Por simplicidad, solo se muestra un mensaje
+        if (Id > 0)
+        {
+            await _repositorioPersonas.Update(_persona);
+        }
+        else
+        {
+            await _repositorioPersonas.Add(_persona);
+        }
         _navigationManager.NavigateTo("/personas");
     }
 

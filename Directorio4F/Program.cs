@@ -1,5 +1,6 @@
 using Directorio4F.Components;
 using Directorio4F.Data;
+using Directorio4F.Repositorio;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,6 +14,8 @@ builder.Services.AddDbContext<BDDirectorioDBContext>(
     options.UseSqlServer(
     builder.Configuration.GetConnectionString("BDDirectorioDBContext")
                         ));
+
+builder.Services.AddScoped<IRepositorioPersonas, RepositorioPersonas>();
 
 var app = builder.Build();
 

@@ -3,6 +3,7 @@ using Directorio4F.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Directorio4F.Migrations
 {
     [DbContext(typeof(BDDirectorioDBContext))]
-    partial class BDDirectorioDBContextModelSnapshot : ModelSnapshot
+    [Migration("20250513155248_Con_Tabla_Clasificaciones")]
+    partial class Con_Tabla_Clasificaciones
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

@@ -19,5 +19,9 @@ namespace Directorio4F.Data
         [RegularExpression(@"^\d{10}$", ErrorMessage = "El campo Teléfono debe contener exactamente 10 dígitos.")]
         [StringLength(10, ErrorMessage = "El campo Teléfono no puede tener más de 10 caracteres.")]
         public string? Telefono { get; set; }
+
+        [Range(1, int.MaxValue, ErrorMessage = "El campo Clasificación es obligatorio.")]
+        public int ClasificacionId { get; set; }
+        virtual public Clasificacion? Clasificacion { get; set; }
     }
 }

@@ -16,6 +16,7 @@ builder.Services.AddDbContext<BDDirectorioDBContext>(
                         ));
 
 builder.Services.AddScoped<IRepositorioPersonas, RepositorioPersonas>();
+builder.Services.AddScoped<IRepositorioClasificaciones, RepositorioClasificaciones>();
 
 var app = builder.Build();
 

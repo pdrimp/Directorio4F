@@ -3,48 +3,72 @@
 @rendermode InteractiveServer
 @inject NavigationManager _navigationManager
 @inject IRepositorioPersonas _repositorioPersonas
+@inject IRepositorioClasificaciones _repositorioClasificaciones
 <PageTitle>Personas</PageTitle>
 <h3>@_mensaje Persona</h3>
+@if (_clasificaciones == null)
+{
+    <p>Cargando clasificaciones...</p>
+}
+else
+{
+    <EditForm Model="_persona" FormName="frmPersona" OnValidSubmit="Guardar">
+        <DataAnnotationsValidator />
+        <div class="mb-3 row">
+            <label for="txtNombre" class="col-sm-2 col-form-label">Nombre</label>
+            <div class="col-sm-10">
+                <InputText class="form-control" id="txtNombre" @bind-Value="_persona.Nombre" />
+                <ValidationMessage For="@(() => _persona.Nombre)" />
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <label for="txtCorreo" class="col-sm-2 col-form-label">Correo</label>
+            <div class="col-sm-10">
+                <InputText class="form-control" id="txtCorreo" @bind-Value="_persona.Correo" />
+                <ValidationMessage For="@(() => _persona.Correo)" />
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <label for="txtTelefono" class="col-sm-2 col-form-label">Teléfono</label>
+            <div class="col-sm-10">
+                <InputText class="form-control" id="txtTelefono" @bind-Value="_persona.Telefono" />
+                <ValidationMessage For="@(() => _persona.Telefono)" />
+            </div>
+        </div>
+        <div class="mb-3 row">
+            <label for="txtTelefono" class="col-sm-2 col-form-label">Clasificación</label>
+            <div class="col-sm-10">
+                <InputSelect @bind-Value="_persona.ClasificacionId" class="form-select">
+                    <option value="">-- Selecciona --</option>
+                    @foreach (var clasificacion in _clasificaciones)
+                    {
+                        <option value="@clasificacion.Id">@clasificacion.Nombre</option>
+                    }
+                </InputSelect>
+                <ValidationMessage For="@(() => _persona.ClasificacionId)" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-10 offset-sm-2">
+                <button type="submit" class="btn btn-primary">Guardar</button>
+                <a class="btn btn-danger" href="/personas">Cancelar</a>
+            </div>
+        </div>
+    </EditForm>
+}
 
-<EditForm Model="_persona" FormName="frmPersona" OnValidSubmit="Guardar">
-    <DataAnnotationsValidator />
-    <div class="mb-3 row">
-        <label for="txtNombre" class="col-sm-2 col-form-label">Nombre</label>
-        <div class="col-sm-10">
-            <InputText class="form-control" id="txtNombre" @bind-Value="_persona.Nombre" />
-            <ValidationMessage For="@(() => _persona.Nombre)" />
-        </div>
-    </div>
-    <div class="mb-3 row">
-        <label for="txtCorreo" class="col-sm-2 col-form-label">Correo</label>
-        <div class="col-sm-10">
-            <InputText class="form-control" id="txtCorreo" @bind-Value="_persona.Correo" />
-            <ValidationMessage For="@(() => _persona.Correo)" />
-        </div>
-    </div>
-    <div class="mb-3 row">
-        <label for="txtTelefono" class="col-sm-2 col-form-label">Teléfono</label>
-        <div class="col-sm-10">
-            <InputText class="form-control" id="txtTelefono" @bind-Value="_persona.Telefono" />
-            <ValidationMessage For="@(() => _persona.Telefono)" />
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-sm-10 offset-sm-2">
-            <button type="submit" class="btn btn-primary">Guardar</button>
-            <a class="btn btn-danger" href="/personas">Cancelar</a>
-        </div>
-    </div>
-</EditForm>
 
 @code {
     [Parameter]
     public int Id { get; set; }
     private Persona _persona = new();
     private string _mensaje = "Nueva ";
+    private List<Clasificacion>? _clasificaciones;
 
     protected override async Task OnInitializedAsync()
     {
+        _clasificaciones = await _repositorioClasificaciones.GetAll();
+
         if (Id > 0)
         {
             _persona = await _repositorioPersonas.Get(Id);

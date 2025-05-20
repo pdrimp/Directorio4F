@@ -4,6 +4,7 @@
 @inject NavigationManager _navigationManager
 @inject IRepositorioPersonas _repositorioPersonas
 @inject IRepositorioClasificaciones _repositorioClasificaciones
+@inject IRepositorioHabitos _repositorioHabitos
 <PageTitle>Personas</PageTitle>
 <h3>@_mensaje Persona</h3>
 @if (_clasificaciones == null)
@@ -36,9 +37,9 @@ else
             </div>
         </div>
         <div class="mb-3 row">
-            <label for="txtTelefono" class="col-sm-2 col-form-label">Clasificación</label>
+            <label for="txtClasificacion" class="col-sm-2 col-form-label">Clasificación</label>
             <div class="col-sm-10">
-                <InputSelect @bind-Value="_persona.ClasificacionId" class="form-select">
+                <InputSelect @bind-Value="_persona.ClasificacionId" class="form-select" id="txtClasificacion">
                     <option value="">-- Selecciona --</option>
                     @foreach (var clasificacion in _clasificaciones)
                     {
@@ -48,6 +49,29 @@ else
                 <ValidationMessage For="@(() => _persona.ClasificacionId)" />
             </div>
         </div>
+
+        <div class="mb-3 row">
+            <label for="txtHabitos" class="col-sm-2 col-form-label">Hábitos</label>
+            <div class="col-sm-10">
+                <div class="form-group">
+                    @foreach (Habito habito in _habitos)
+                    {
+                        <div class="form-check">
+                            <input class="form-check-input"
+                                   type="checkbox"
+                                   id="checkbox-@habito.Id"
+                                   @onchange="e => OnCheckboxChanged(e, habito.Id)"
+                                   checked="@_habitosIdSeleccionados.Contains(habito.Id)" />
+
+                            <label class="form-check-label" for="checkbox-@habito.Id">
+                                @habito.Nombre
+                            </label>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
         <div class="row">
             <div class="col-sm-10 offset-sm-2">
                 <button type="submit" class="btn btn-primary">Guardar</button>
@@ -64,36 +88,38 @@ else
     private Persona _persona = new();
     private string _mensaje = "Nueva ";
     private List<Clasificacion>? _clasificaciones;
+    private List<Habito> _habitos = new();
+    private List<int> _habitosIdSeleccionados = new();
 
     protected override async Task OnInitializedAsync()
     {
         _clasificaciones = await _repositorioClasificaciones.GetAll();
-
+        _habitos = await _repositorioHabitos.GetAll();
         if (Id > 0)
         {
             _persona = await _repositorioPersonas.Get(Id);
             _mensaje = "Modificar ";
+            if (_persona.Habitos != null)
+            {
+                foreach (var habito in _persona.Habitos)
+                {
+                    _habitosIdSeleccionados.Add(habito.Id);
+                }
+            }
         }
     }
 
-
-    // protected override void OnInitialized()
-    // {
-    //     if (Id > 0)
-    //     {
-    //         _persona = new Persona
-    //             {
-    //                 Id = Id,
-    //                 Nombre = $"Nombre de {Id}",
-    //                 Correo = $"correo{Id}@ucol",
-    //                 Telefono = $"{Id}"
-    //             };
-    //         _mensaje = "Modificar ";
-    //     }
-    // }
-
     private async Task Guardar()
     {
+        _persona.Habitos = new List<Habito>();
+        foreach (int id in _habitosIdSeleccionados)
+        {
+            var habito = await _repositorioHabitos.Get(id);
+            if (habito != null)
+            {
+                _persona.Habitos.Add(habito);
+            }
+        }
         if (Id > 0)
         {
             await _repositorioPersonas.Update(_persona);
@@ -105,4 +131,18 @@ else
         _navigationManager.NavigateTo("/personas");
     }
 
+    private void OnCheckboxChanged(ChangeEventArgs e, int id)
+    {
+        bool isChecked = (bool)e.Value;
+
+        if (isChecked)
+        {
+            if (!_habitosIdSeleccionados.Contains(id))
+                _habitosIdSeleccionados.Add(id);
+        }
+        else
+        {
+            _habitosIdSeleccionados.Remove(id);
+        }
+    }
 }

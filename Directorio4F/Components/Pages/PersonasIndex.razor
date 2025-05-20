@@ -19,6 +19,7 @@ else if (_personas.Count() > 0)
                 <th>Correo</th>
                 <th>Telefono</th>
                 <th>Clasificación</th>
+                <th>Hábitos</th>
                 <th>Acciones</th>
             </tr>
         </thead>
@@ -30,6 +31,15 @@ else if (_personas.Count() > 0)
                     <td>@persona.Correo</td>
                     <td>@persona.Telefono</td>
                     <td>@persona.Clasificacion?.Nombre</td>
+                    <td>
+                        @if (persona.Habitos != null)
+                        {
+                            foreach (var habito in persona.Habitos)
+                            {
+                                <span class="badge bg-secondary">@habito.Nombre</span>
+                            }
+                        }
+                    </td>
                     <td>
                         <button class="btn btn-outline-primary" @onclick="@(() => Editar(persona))">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">

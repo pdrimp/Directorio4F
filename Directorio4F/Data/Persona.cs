@@ -23,5 +23,6 @@ namespace Directorio4F.Data
         [Range(1, int.MaxValue, ErrorMessage = "El campo Clasificación es obligatorio.")]
         public int ClasificacionId { get; set; }
         virtual public Clasificacion? Clasificacion { get; set; }
+        public ICollection<Habito>? Habitos { get; set; }
     }
 }

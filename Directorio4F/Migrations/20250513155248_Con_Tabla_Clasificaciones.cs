@@ -41,7 +41,7 @@ namespace Directorio4F.Migrations
                 column: "ClasificacionId",
                 principalTable: "Clasificaciones",
                 principalColumn: "Id",
-                onDelete: ReferentialAction.Cascade);
+                onDelete: ReferentialAction.NoAction);
         }
 
         /// <inheritdoc />

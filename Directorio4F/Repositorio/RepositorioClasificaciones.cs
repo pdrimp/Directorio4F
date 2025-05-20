@@ -18,12 +18,16 @@ namespace Directorio4F.Repositorio
         public async Task Delete(int id)
         {
             var clasificacion = await Get(id);
+            if (clasificacion.Personas.Count > 0)
+            {
+                throw new Exception("No se puede eliminar la clasificación porque tiene personas asociadas.");
+            }
             _context.Clasificaciones.Remove(clasificacion);
             await _context.SaveChangesAsync();
         }
         public async Task<Clasificacion> Get(int id)
         {
-            return await _context.Clasificaciones.FindAsync(id);
+            return await _context.Clasificaciones.Include(p => p.Personas).FirstAsync(r => r.Id == id);
         }
         public async Task<List<Clasificacion>> GetAll()
         {

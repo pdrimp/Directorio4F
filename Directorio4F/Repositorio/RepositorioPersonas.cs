@@ -12,11 +12,11 @@ namespace Directorio4F.Repositorio
         }
         public async Task<List<Persona>> GetAll()
         {
-            return await _context.Personas.Include(c=>c.Clasificacion).AsNoTracking().ToListAsync();
+            return await _context.Personas.Include(c => c.Clasificacion).Include(h => h.Habitos).AsNoTracking().ToListAsync();
         }
         public async Task<Persona> Get(int id)
         {
-            return await _context.Personas.FindAsync(id);
+            return await _context.Personas.Include(h => h.Habitos).FirstAsync(r => r.Id == id);
         }
         public async Task Add(Persona persona)
         {
